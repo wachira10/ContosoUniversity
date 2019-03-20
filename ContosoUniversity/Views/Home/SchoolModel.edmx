@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="SchoolModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="SchoolModelTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="SchoolModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="SchoolContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Courses" EntityType="SchoolModel.Course" />
+          <EntitySet Name="Enrollments" EntityType="SchoolModel.Enrollment" />
+          <AssociationSet Name="CourseEnrollment" Association="SchoolModel.CourseEnrollment">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="Enrollment" EntitySet="Enrollments" />
+          </AssociationSet>
+          <AssociationSet Name="EnrollmentStudent" Association="SchoolModel.EnrollmentStudent">
+            <End Role="Enrollment" EntitySet="Enrollments" />
+            <End Role="Student" EntitySet="Students" />
+          </AssociationSet>
+          <EntitySet Name="OfficeAssigment" EntityType="SchoolModel.OfficeAssigment" />
+          <AssociationSet Name="OfficeAssigmentInstructor" Association="SchoolModel.OfficeAssigmentInstructor">
+            <End Role="OfficeAssigment" EntitySet="OfficeAssigment" />
+            <End Role="Instructor" EntitySet="Instructors" />
+          </AssociationSet>
+          <EntitySet Name="Department" EntityType="SchoolModel.Department" />
+          <AssociationSet Name="InstructorDepartment" Association="SchoolModel.InstructorDepartment">
+            <End Role="Instructor" EntitySet="Instructors" />
+            <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="InstructorCourse" Association="SchoolModel.InstructorCourse">
+            <End Role="Instructor" EntitySet="Instructors" />
+            <End Role="Course" EntitySet="Courses" />
+          </AssociationSet>
+          <AssociationSet Name="DepartmentCourse" Association="SchoolModel.DepartmentCourse">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Course" EntitySet="Courses" />
+          </AssociationSet>
+          <EntitySet Name="Students" EntityType="SchoolModel.Student" />
+          <EntitySet Name="Instructors" EntityType="SchoolModel.Instructor" />
+        </EntityContainer>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="CourseId" />
+          </Key>
+          <Property Name="CourseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" />
+          <Property Name="Credits" Type="String" Nullable="false" />
+          <NavigationProperty Name="Enrollments" Relationship="SchoolModel.CourseEnrollment" FromRole="Course" ToRole="Enrollment" />
+          <Property Name="DepartmentID" Type="String" Nullable="false" />
+          <NavigationProperty Name="Instructors" Relationship="SchoolModel.InstructorCourse" FromRole="Course" ToRole="Instructor" />
+          <NavigationProperty Name="Department" Relationship="SchoolModel.DepartmentCourse" FromRole="Course" ToRole="Department" />
+          <Property Name="DepartmentDepartmentId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Enrollment">
+          <Key>
+            <PropertyRef Name="EnrollmentId" />
+          </Key>
+          <Property Name="EnrollmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CourseID" Type="String" Nullable="false" />
+          <Property Name="StudentID" Type="String" Nullable="false" />
+          <Property Name="Grade" Type="String" Nullable="true" />
+          <NavigationProperty Name="Course" Relationship="SchoolModel.CourseEnrollment" FromRole="Enrollment" ToRole="Course" />
+          <NavigationProperty Name="Student" Relationship="SchoolModel.EnrollmentStudent" FromRole="Enrollment" ToRole="Student" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="String" Nullable="false" />
+          <NavigationProperty Name="Enrollments" Relationship="SchoolModel.EnrollmentStudent" FromRole="Student" ToRole="Enrollment" />
+          <Property Name="LastName" Type="String" Nullable="false" />
+          <Property Name="FirstMidName" Type="String" Nullable="false" />
+          <Property Name="EnrollmentDate" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="CourseEnrollment">
+          <End Type="SchoolModel.Course" Role="Course" Multiplicity="1" />
+          <End Type="SchoolModel.Enrollment" Role="Enrollment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CourseId" />
+            </Principal>
+            <Dependent Role="Enrollment">
+              <PropertyRef Name="CourseCourseId1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="EnrollmentStudent">
+          <End Type="SchoolModel.Enrollment" Role="Enrollment" Multiplicity="*" />
+          <End Type="SchoolModel.Student" Role="Student" Multiplicity="1" />
+        </Association>
+        <EntityType Name="Instructor">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <NavigationProperty Name="OfficeAssigment" Relationship="SchoolModel.OfficeAssigmentInstructor" FromRole="Instructor" ToRole="OfficeAssigment" />
+          <NavigationProperty Name="Departments" Relationship="SchoolModel.InstructorDepartment" FromRole="Instructor" ToRole="Department" />
+          <NavigationProperty Name="Courses" Relationship="SchoolModel.InstructorCourse" FromRole="Instructor" ToRole="Course" />
+          <Property Name="ID" Type="String" Nullable="false" />
+          <Property Name="LastName" Type="String" Nullable="false" />
+          <Property Name="FirstMidName" Type="String" Nullable="false" />
+          <Property Name="HireDate" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OfficeAssigment">
+          <Key>
+            <PropertyRef Name="InstructorID" />
+          </Key>
+          <Property Name="InstructorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Location" Type="String" Nullable="false" />
+          <NavigationProperty Name="Instructor" Relationship="SchoolModel.OfficeAssigmentInstructor" FromRole="OfficeAssigment" ToRole="Instructor" />
+        </EntityType>
+        <Association Name="OfficeAssigmentInstructor">
+          <End Type="SchoolModel.OfficeAssigment" Role="OfficeAssigment" Multiplicity="0..1" />
+          <End Type="SchoolModel.Instructor" Role="Instructor" Multiplicity="1" />
+        </Association>
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentId" />
+          </Key>
+          <Property Name="DepartmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Budget" Type="String" Nullable="false" />
+          <Property Name="StartDate" Type="String" Nullable="false" />
+          <Property Name="InstructorID" Type="String" Nullable="false" />
+          <NavigationProperty Name="Instructor" Relationship="SchoolModel.InstructorDepartment" FromRole="Department" ToRole="Instructor" />
+          <Property Name="InstructorInstructorId" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="Courses" Relationship="SchoolModel.DepartmentCourse" FromRole="Department" ToRole="Course" />
+        </EntityType>
+        <Association Name="InstructorDepartment">
+          <End Type="SchoolModel.Instructor" Role="Instructor" Multiplicity="0..1" />
+          <End Type="SchoolModel.Department" Role="Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Instructor">
+            </Principal>
+            <Dependent Role="Department">
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="InstructorCourse">
+          <End Type="SchoolModel.Instructor" Role="Instructor" Multiplicity="*" />
+          <End Type="SchoolModel.Course" Role="Course" Multiplicity="*" />
+        </Association>
+        <Association Name="DepartmentCourse">
+          <End Type="SchoolModel.Department" Role="Department" Multiplicity="1" />
+          <End Type="SchoolModel.Course" Role="Course" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Course">
+              <PropertyRef Name="DepartmentDepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="SchoolModel" />
+        <Alias Key="Target" Value="SchoolModel.Store" />
+        <EntityContainerMapping CdmEntityContainer="SchoolContext" StorageEntityContainer="SchoolModelTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
